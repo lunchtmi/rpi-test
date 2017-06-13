@@ -1,4 +1,4 @@
-FROM armbuild/debian:jessie
+FROM FROM resin/rpi-raspbian
 MAINTAINER lunchtmi
 
 #RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
