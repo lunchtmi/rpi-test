@@ -6,9 +6,9 @@ script:
 # prepare qemu
 - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 # build image
-- docker build -t lunchtmi/rpi-test .
+- docker build -t lunchtm/rpi-test .
 # test image
-- docker run lunchtmi/rpi-test uname -a
+- docker run lunchtm/rpi-test uname -a
 # push image
 - >
   if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
