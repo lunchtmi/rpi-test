@@ -1,38 +1,32 @@
-# Pull base image
-FROM resin/rpi-raspbian:wheezy
+FROM armbuild/debian:jessie
 MAINTAINER lunchtmi
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN groupadd -r mysql && useradd -r -g mysql mysql
 
-# FATAL ERROR: please install the following Perl modules before executing /usr/local/mysql/scripts/mysql_install_db:
-# File::Basename
-# File::Copy
-# Sys::Hostname
-# Data::Dumper
-RUN apt-get update && apt-get install -y perl --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
 
-ENV MYSQL_VERSION 5.5
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y libmono-cil-dev
 
-# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't have an explicit way to disable the mysql_install_db codepath besides having a database already "configured" (ie, stuff in /var/lib/mysql/mysql)
-# also, we set debconf keys to make APT a little quieter
-RUN { \
-		echo mysql-server mysql-server/data-dir select ''; \
-		echo mysql-server mysql-server/root-pass password ''; \
-		echo mysql-server mysql-server/re-root-pass password ''; \
-		echo mysql-server mysql-server/remove-test-db select false; \
-	} | debconf-set-selections \
-	&& apt-get update && apt-get install -y mysql-server="${MYSQL_VERSION}"* && rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql && chown -R mysql:mysql /var/lib/mysql
+RUN apt-get install -y apt-transport-https --force-yes &&\
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC &&\
+    echo "deb https://apt.sonarr.tv/ master main" | tee -a /etc/apt/sources.list.d/sonarr.list &&\
+    apt-get update &&\
+    apt-get install nzbdrone -y && \
+    adduser --system -shell "/bin/bash" --uid 1000 --disabled-password --group --home /var/lib/sonarr sonarr && \
+    groupadd media && \
+    usermod -a -G media sonarr && \
+  apt-get -y autoremove && \
+  apt-get -y clean && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /tmp/*
 
-# comment out a few problematic configuration values
-RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf
+RUN mkdir -p /config && chown sonarr:sonarr /config
+RUN mkdir -p /logs && chown sonarr:sonarr /logs
+RUN mkdir -p /downloads && chown sonarr:media /downloads
+RUN mkdir -p /tv && chown sonarr:media /tv
 
-VOLUME /var/lib/mysql
+VOLUME ["/config", "/downloads", "/logs", "/tv"]
 
-COPY entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+USER sonarr
 
-EXPOSE 3306
-CMD ["mysqld"]
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help
+CMD mono /opt/NzbDrone/NzbDrone.exe -nobrowswer -data=/config
