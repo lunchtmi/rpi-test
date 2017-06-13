@@ -1,7 +1,7 @@
 FROM armbuild/debian:jessie
 MAINTAINER lunchtmi
 
-RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
+#RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
 
 RUN apt-get update && \
     apt-get upgrade -y && \
