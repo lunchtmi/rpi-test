@@ -18,3 +18,5 @@ script:
     docker push lunchtmi/rpi-mysql:$TAG
     docker push lunchtmi/rpi-mysql
   fi
+
+
