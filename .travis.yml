@@ -14,9 +14,9 @@ script:
   if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
     TAG=$(grep "ENV MYSQL_VERSION" Dockerfile | awk 'NF>1{print $NF}')
-    docker tag lunchtmi/rpi-test lunchtmi/rpi-test:$TAG
-    docker push lunchtmi/rpi-test:$TAG
-    docker push lunchtmi/rpi-test
+    docker tag lunchtm/rpi-test lunchtm/rpi-test:$TAG
+    docker push lunchtm/rpi-test:$TAG
+    docker push lunchtm/rpi-test
   fi
 
 
