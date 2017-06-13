@@ -1,4 +1,4 @@
-FROM FROM resin/rpi-raspbian:wheezy
+FROM resin/rpi-raspbian:wheezy
 MAINTAINER lunchtmi
 
 #RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
