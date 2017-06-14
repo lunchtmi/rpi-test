@@ -2,7 +2,7 @@ FROM resin/rpi-raspbian:wheezy
 MAINTAINER lunchtmi
 
 #RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
-ENV SONARR_VERSION 0.1
+ENV SONARR_VERSION 2.0.0.4753
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y libmono-cil-dev
