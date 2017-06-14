@@ -10,7 +10,7 @@ script:
 # test image
 # - docker run lunchtm/rpi-test uname -a
 # push image
-docker push lunchtm/rpi-test
+docker push lunchtm/rpi-test:test
 #- >
 #  if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 #    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
