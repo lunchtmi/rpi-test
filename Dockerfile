@@ -1,32 +1,20 @@
-FROM resin/rpi-raspbian:wheezy
-MAINTAINER lunchtmi
+FROM resin/rpi-raspbian:latest  
 
-#RUN echo "Package: *\nPin: release n=jessie\nPin-Priority: 998\n" > /etc/apt/preferences.d/sonarr
-ENV SONARR_VERSION 2.0.0.4753
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y libmono-cil-dev
+LABEL maintainer "lunchtm"
 
-RUN apt-get install -y apt-transport-https --force-yes &&\
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC &&\
-    echo "deb https://apt.sonarr.tv/ master main" | tee -a /etc/apt/sources.list.d/sonarr.list &&\
-    apt-get update &&\
-    apt-get install nzbdrone -y && \
-    adduser --system -shell "/bin/bash" --uid 1000 --disabled-password --group --home /var/lib/sonarr sonarr && \
-    groupadd media && \
-    usermod -a -G media sonarr && \
-  apt-get -y autoremove && \
-  apt-get -y clean && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /tmp/*
 
-RUN mkdir -p /config && chown sonarr:sonarr /config
-RUN mkdir -p /logs && chown sonarr:sonarr /logs
-RUN mkdir -p /downloads && chown sonarr:media /downloads
-RUN mkdir -p /tv && chown sonarr:media /tv
+ENTRYPOINT []
 
-VOLUME ["/config", "/downloads", "/logs", "/tv"]
+# python-dev python-pip nodejs npm youtube-dl lame mpg321
+RUN apt-get update && \  
+    apt-get -qy install curl ca-certificates
 
-USER sonarr
+ADD https://raw.githubusercontent.com/lanceseidman/PiCAST/master/setup.sh /home/picast/setup.sh
+# RUN curl -o /home/picast/setup.sh https://raw.githubusercontent.com/lanceseidman/PiCAST/master/setup.sh
+#COPY setup.sh /home/picast/setup.sh
+RUN chmod +x /home/picast/setup.sh
+RUN ./home/picast/setup.sh
 
-CMD mono /opt/NzbDrone/NzbDrone.exe -nobrowswer -data=/config
+EXPOSE 3000
+
+CMD ["bash"]  
